@@ -13,8 +13,8 @@ const Header = () => {
       </div>
       <div className={Styles.menu}>
         <Link href="/">Home</Link>
-        <Link href="/">O que fazemos</Link>
-        <Link href="/">Cases</Link>
+        <Link href="/">Sobre Nós</Link>
+        <Link href="/">Serviços</Link>
       </div>
       <div className={Styles.action}>
         <Button title="Fale conosco" onClick={() => ScrollTo("contato")} />

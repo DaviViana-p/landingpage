@@ -10,13 +10,15 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 15px 3rem;
-  background-image: url("/images/fundoWelcome.svg");
+  background-color: #1c3b1c;
+  //background-image: url("/images/fundoWelcome.svg");
   background-repeat: no-repeat;
   background-size: cover; //rever
   margin-bottom: 10rem;
 
   @include Phone {
     grid-template-columns: 1fr;
+    justify-content:center;
     gap: 15px;
   }
 
@@ -26,7 +28,13 @@
 }
 
 .texts {
+  text-align: center;
+
+  ul {
+    text-align: left
+  }
   span {
+    
     @include SizeNormal;
     font-weight: 600;
     color: $green2-color;
@@ -38,10 +46,28 @@
   }
 
   p {
+    text-align:left;
     @include SizeNormal;
     font-weight: 300;
     opacity: 0.7;
   }
+  li {
+    list-style-type: decimal;
+  }
+}
+
+.feature {
+  padding-top: 3rem;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  p{
+    text-align: center;
+  }
+}
+.icon {
+  width: 25px;
+  height: 25px;
 }
 
 .form {
@@ -54,6 +80,15 @@
     color: $purple-color;
     font-weight: bold;
     @include SizeMedium;
+    text-align: center;
+  }
+
+  p {
+    color: $purple-color;
+    font-weight: bold;
+    @include SizeSmall;
+    text-align: center;
+
   }
 
   form {
@@ -62,13 +97,15 @@
   }
 
   @include Phone {
-    padding: 1rem;
+    padding: 0rem;
 
     form {
       gap: 1rem;
     }
   }
 }
+
+
 
 .footer {
   @include SizeSmall;

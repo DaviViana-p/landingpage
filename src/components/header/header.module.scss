@@ -8,7 +8,7 @@
   padding-top: 34px;
   padding-bottom: 34px;
   width: 100%;
-  background-color: $purple-color;
+  background-color: rgba(255, 255, 255,0.9);
   border-bottom: 0.5px solid $gray-color;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -18,12 +18,18 @@
   @include Phone {
     padding-top: 1rem;
     padding-bottom: 1rem;
+    grid-template-columns: repeat(1, 1fr);
+    text-align: center;
+
   }
 
   @include Tablet {
     grid-template-columns: repeat(2, 1fr);
   }
+  
 }
+
+
 
 .menu {
   font-size: 22px;

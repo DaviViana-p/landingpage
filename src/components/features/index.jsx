@@ -5,45 +5,40 @@ import Icon from "/public/images/icon.svg";
 const Features = () => {
   return (
     <div className={Styles.container}>
-      <h1>Neste bairro, não há agência melhor. Garantimos.</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </p>
+      <h1>NOSSOS SERVIÇOS.</h1>
 
       <div className={Styles.features}>
         <div className={Styles.feature}>
           <Image src={Icon} alt="Icon" className={Styles.icon} />
-          <h1>Digital Strategy</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna.
-          </p>
+          <h1>GEORREFERENCIAMENTO DE IMÓVEIS RURAIS (INCRA)</h1>
+          
         </div>
         <div className={Styles.feature}>
           <Image src={Icon} alt="Icon" className={Styles.icon} />
-          <h1>Digital Strategy</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna.
-          </p>
+          <h1>DREGULARIZAÇÃO DE IMÓVEIS RURAIS
+          CCIR, ITR, NIRF, ADA E CAR</h1>
+          
         </div>
         <div className={Styles.feature}>
           <Image src={Icon} alt="Icon" className={Styles.icon} />
-          <h1>Digital Strategy</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna.
-          </p>
+          <h1>GEOPROCESSAMENTO</h1>
+          
         </div>
         <div className={Styles.feature}>
           <Image src={Icon} alt="Icon" className={Styles.icon} />
-          <h1>Digital Strategy</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna.
-          </p>
+          <h1>USUCAPIÃO</h1>
+          
         </div>
+        <div className={Styles.feature}>
+          <Image src={Icon} alt="Icon" className={Styles.icon} />
+          <h1>LEVANTAMENTO TOPOGRÁFICO</h1>
+          
+        </div> 
+        <div className={Styles.feature}>
+          <Image src={Icon} alt="Icon" className={Styles.icon} />
+          <h1>PROJETO DE TERRAPLENAGEM</h1>
+          
+        </div>        
       </div>
     </div>
   );

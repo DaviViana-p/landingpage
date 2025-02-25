@@ -1,0 +1,33 @@
+@import "/src/styles/mixins/colors.scss";
+@import "/src/styles/mixins/padding.scss";
+@import "/src/styles/mixins/fonts.scss";
+@import "/src/styles/mixins/responsive.scss";
+
+
+
+
+.map {
+    border-radius: 1rem;
+    width: 100%;
+    height: 600px;
+    
+    @include Phone {
+        border-radius: 1rem;
+        width: 400px;
+        height: 400px;
+        padding: 0px;
+      }
+}
+
+.text {
+    background-color: white;
+    color: black;
+    @include Padding;
+    h1 {
+        @include SizeNormal;
+        text-align: center;
+    }
+    @include Phone {
+        padding: 6px;
+      }
+}

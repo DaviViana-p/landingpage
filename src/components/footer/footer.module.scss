@@ -6,7 +6,7 @@
 .container {
   @include Padding;
   padding-top: 72px;
-  background-color: $purple3-color;
+  background-color: #1C3B1C;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 

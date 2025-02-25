@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Icon from "/public/images/icon.svg";
+import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
 import { useFormik } from "formik";
@@ -11,6 +13,7 @@ import { Loading } from "../loading/index";
 import { SuccessModal } from "../successModal";
 import { FailModal } from "../failModal/index";
 
+
 const Contato = () => {
   const [isloading, setLoading] = useState(false);
   const [successModal, setModalSuccess] = useState(false);
@@ -22,7 +25,9 @@ const Contato = () => {
       email: "",
       phone: "",
       website: "",
-      midia: "",
+      local: "",
+      servico: "",
+      detalhes: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Campo Obrigatório"),
@@ -33,7 +38,9 @@ const Contato = () => {
         .matches("", "Digite um telefone válido")
         .required("Campo Obrigatório"),
       website: Yup.string().required("Campo Obrigatório"),
-      midia: Yup.string().required("Campo Obrigatório"),
+      local: Yup.string().required("Campo Obrigatório"),
+      servico: Yup.string().required("Campo Obrigatório"),
+      detalhes: Yup.string().required("Campo Obrigatório"),
     }),
     validateOnChange: false,
     validateOnBlur: false,
@@ -46,7 +53,7 @@ const Contato = () => {
     setLoading(true);
     axios
       .post("/api/sendEmail", {
-        messageBody: `Nome: ${values.name}, Email: ${values.email}, Telefone: ${values.phone}, Site: ${values.website}, Midia: ${values.midia}`,
+        messageBody: `Nome: ${values.name}, Email: ${values.email}, Telefone: ${values.phone}, Site: ${values.website}, local: ${values.local}, servico: ${values.servico}, detalhes: ${values.detalhes}`,
       })
       .then(() => {
         formik.resetForm();
@@ -72,14 +79,25 @@ const Contato = () => {
       <div className={Styles.container} id="contato">
         <div className={Styles.texts}>
           <span>ENTRE EM CONTATO</span>
-          <h1>Aumente seu resultado de vendas e performance</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna
-          </p>
+          <h1>Nossa forma de trabalhar</h1>
+          
+          <ul>
+            <li>Contato: fale conosco para solicitar o seu projeto;</li>
+            <li>Diagnóstico: ao conversar com você, vamos entender melhor o seu problema e apresentar uma proposta de solução personalizada;</li>
+            <li>Desenvolvimento: nossos consultores trabalham para executar o projeto, sempre validando com você;</li>
+            <li>Entrega da Solução: ao fim do projeto, fazemos as entregas acordadas e te orientamos em como prosseguir.</li>
+          </ul>           
+          
+
+          <div className={Styles.feature}>
+            <Image src={Icon} alt="Icon" className={Styles.icon} />
+            <p>Se desejar faça seu pedido de orçamento pelo Whatsapp</p>
+            <p>(xx)xxxxx-xxxx</p>
+           </div> 
         </div>
         <div className={Styles.form}>
-          <h1>Fale com um especialista</h1>
+          <h1>Peça seu projeto</h1>
+          <p>Preencha o formulário para podermos entrar em contato</p>
 
           <form id="formulario" onSubmit={formik.handleSubmit}>
             <Input
@@ -123,16 +141,43 @@ const Contato = () => {
               value={formik.values.website}
               required
             />
+            <Input
+              id="local"
+              name="local"
+              type="text"
+              placeholder="local do Serviço"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.local}
+              required
+            />
             <Select
-              id="midia"
-              name="midia"
-              placeholder="Orçamento para mídia"
+              id="servico"
+              name="servico"
+              placeholder="Serviço desejado"
               options={[
-                { label: "Instagram", value: "instagram" },
-                { label: "Facebook", value: "facebook" },
+                { label: "GEORREFERENCIAMENTO DE IMÓVEIS RURAIS", value: "GEORREFERENCIAMENTO_DE_IMÓVEIS_RURAIS" },
+                { label: "REGULARIZAÇÃO DE IMÓVEIS RURAIS", value: "REGULARIZAÇÃO_DE_IMÓVEIS_RURAIS" },
+                { label: "DESMEMBRAMENTO, REMEMBRAMENTO", value: "DESMEMBRAMENTO_REMEMBRAMENTO" },
+                { label: "LOCAÇÃO DE OBRA", value: "LOCAÇÃODE_OBRA" },
+                { label: "GEOPROCESSAMENTO", value: "GEOPROCESSAMENTO" },
+                { label: "PROJETO DE AS BUILT", value: "PROJETO_DE_ASBUILT" },
+                { label: "USUCAPIÃO", value: "USUCAPIAO" },
+                { label: "LEVANTAMENTO TOPOGRÁFICO", value: "LEVANTAMENTO_TOPOGRÁFICO" },
+                { label: "PROJETO DE TERRAPLENAGEM", value: "PROJETO_DE_TERRAPLENAGEM" },
               ]}
               onChange={formik.handleChange}
-              value={formik.values.midia}
+              value={formik.values.servico}
+              required
+            />
+            <Input
+              id="detalhes"
+              name="detalhes"
+              type="text"
+              placeholder="Conte Mais Sobre Suas Necessidades"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.detalhes}
               required
             />
 

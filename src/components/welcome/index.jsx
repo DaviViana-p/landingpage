@@ -8,20 +8,17 @@ const Welcome = () => {
   return (
     <div className={Styles.container}>
       <div className={Styles.text}>
-        <h1>Melhor agência de marketing do bairro</h1>
-        <p>
-          Somos uma agência de performance digital, aceleramos vendas e
-          aquisição de leads para grandes marcas.
+      <p>
+          Bem Vindo 
         </p>
+        <h1>RVS TOPOGRAFIA E CONSULTORIA</h1>
         <Button
           title="Aumentar vendas"
           kind="secundary"
           onClick={() => ScrollTo("contato")}
         />
       </div>
-      <div className={Styles.image}>
-        <Image src={BannerWelcome} alt="Banner Welcome" />
-      </div>
+
     </div>
   );
 };

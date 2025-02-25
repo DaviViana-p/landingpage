@@ -9,14 +9,12 @@
   background-image: url("/images/fundoWelcome.svg");
   background-repeat: no-repeat;
   background-size: cover; //rever
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  text-align: center;
 
   @include Phone {
     height: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: max-content;
     padding-top: 1rem;
+    padding-bottom: 4rem;
   }
 
   @include Tablet {
