@@ -1,0 +1,20 @@
+@import "/src/styles/mixins/colors.scss";
+@import "/src/styles/mixins/padding.scss";
+@import "/src/styles/mixins/responsive.scss";
+
+.sobreNos{
+    @include Padding;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    
+}
+
+.container{
+    text-align: center;
+    border-radius: 15px;
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
