@@ -9,6 +9,10 @@
     gap: 1rem;
     padding-top: 15px;
     padding-bottom: 15px;
+    @include Phone {
+        grid-template-columns: repeat(1, 1fr);
+
+    }
     
 }
 
