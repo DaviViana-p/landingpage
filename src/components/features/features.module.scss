@@ -87,7 +87,7 @@
   border-radius: 10px;
 
   h1 {
-    @include SizeSmall;
+    @include SizeMedium;
     font-weight: bold;
     color: $purple2-color;
     width: auto;
@@ -95,7 +95,7 @@
   }
 
   p {
-    @include SizeSmall;
+    @include SizeMedium;
     color: $gray2-color;
     width: auto;
   }
