@@ -15,16 +15,6 @@ const Footer = () => {
         <h1 className={Styles.title}>+55 22 98825-2862</h1>
         <p>rodrigo@rvstopografia.com</p>
       </div>
-      <div className={Styles.column}>
-        <h1>MENU</h1>
-        <p>Quem somos</p>
-        <p>Cases</p>
-      </div>
-      <div className={Styles.column}>
-        <h1>CONTEÚDO</h1>
-        <p>E-books</p>
-        <p>Fórmulas prontas</p>
-      </div>
       <div className={`${Styles.column} ${Styles.alignRight}`}>
         <h1>SOCIAL</h1>
         <div className={Styles.icons}>
@@ -43,7 +33,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={Styles.allRightReserved}>
-        ©2022 RVS - Todos os direitos reservados.
+        ©2025 RVS - Todos os direitos reservados.
       </div>
     </div>
   );

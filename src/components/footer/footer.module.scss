@@ -8,12 +8,15 @@
   padding-top: 72px;
   background-color: #1C3B1C;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  
 
   @include Phone {
     grid-template-columns: 1fr;
     padding-top: 1rem;
     gap: 1rem;
+    width: auto;
+    height: auto;
   }
 }
 
@@ -52,9 +55,10 @@
 
   @include Phone {
     margin-top: 0px;
+    text-align: center;
 
     &.alignRight {
-      text-align: left;
+      text-align: center;
     }
   }
 }
@@ -68,5 +72,7 @@
 
   @include Phone {
     grid-column: 1;
+    
+    
   }
 }
