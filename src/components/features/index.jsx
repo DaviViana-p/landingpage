@@ -13,7 +13,7 @@ const Features = () => {
       <div className={Styles.features}>
         <div className={Styles.feature}>
           <Image src={Icon} alt="Icon" className={Styles.icon} />
-          <h1>Topografia e GerorreferenciamentoO</h1>
+          <h1>Topografia e Georreferenciamento</h1>
           <p>
 					- Levantamentos topográficos planimétricos e planialtimétricos;
 - Levantamentos topográficos cadastrais urbanos e rurais;
