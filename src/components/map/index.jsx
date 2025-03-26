@@ -4,8 +4,8 @@ import Styles from "./map.module.scss";
 const Map = () => {
   return (
     <div className={Styles.text}>
-        <h1>Telefone: (xx)xxxxx-xxxx</h1>
-        <h1>Email: contato@gmail.com</h1>
+        <h1>Telefone: +55 22 98825-2862 / 22 26209246</h1>
+        <h1>Email: rodrigo@rvstopografia.com</h1>
       <iframe
         loading="lazy"
         src="https://www.google.com/maps/embed/v1/place?q=Búzios,+RJ&key=AIzaSyD09zQ9PNDNNy9TadMuzRV_UsPUoWKntt8"

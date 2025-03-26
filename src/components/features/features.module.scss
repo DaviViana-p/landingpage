@@ -6,17 +6,23 @@
 .container {
   color: black;
   @include Padding;
+  padding-top: 35px;
   padding-bottom: 255px;
   display: flex;
   flex-flow: column;
-  align-items: center;
-  justify-content: center;
+  align-items: top;
   background-color: rgb(255, 255, 255);
+  height: auto;
+  width: 100%;
+  align-items: center; 
+
 
 
   h1 {
-    @include SizeLarge;
+    @include SizeMedium;
     font-weight: bold;
+    text-align: center;
+    width: 100%;
   }
 
   p {
@@ -60,9 +66,11 @@
 
 .features {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 68px;
   text-align: center;
+  
+  
 
   @include Phone {
     grid-template-columns: 1fr;
@@ -72,26 +80,24 @@
 
 .feature {
   max-width: 519px;
-  max-height: 347px;
+  max-height: 100%;
   width: 100%;
   height: 100%;
   padding: 32px 30px;
-  background-color: rgba(128, 128, 128, 0.5);
-  border-radius: 15px;
+  border-radius: 10px;
 
   h1 {
-    @include SizeMedium;
+    @include SizeSmall;
     font-weight: bold;
     color: $purple2-color;
     width: auto;
-    text-align: left;
+    text-align: center;
   }
 
   p {
     @include SizeSmall;
     color: $gray2-color;
     width: auto;
-    text-align: left;
   }
 
   @include Phone {
@@ -99,4 +105,10 @@
     height: 100%;
     padding: 20px;
   }
+}
+.title {
+  @include SizeLarge;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 4rem;
 }

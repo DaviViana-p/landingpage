@@ -5,10 +5,11 @@
 
 .container {
   @include Padding;
+  padding-top: 30px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   gap: 15px 3rem;
   background-color: #1c3b1c;
   //background-image: url("/images/fundoWelcome.svg");

@@ -12,6 +12,7 @@ import Select from "../select";
 import { Loading } from "../loading/index";
 import { SuccessModal } from "../successModal";
 import { FailModal } from "../failModal/index";
+import Script from "next/script";
 
 
 const Contato = () => {
@@ -29,6 +30,8 @@ const Contato = () => {
       servico: "",
       detalhes: "",
     },
+    
+
     validationSchema: Yup.object({
       name: Yup.string().required("Campo Obrigatório"),
       email: Yup.string()
@@ -51,9 +54,13 @@ const Contato = () => {
 
   const handleSubmitForm = (values) => {
     setLoading(true);
+    let token = "";
+    grecaptcha.ready(async () => {
+      token = await grecaptcha.execute('6Lf0A_sqAAAAAPA6RSKU7_p13QQ3Hq88rb-olUeh', { action: 'submit' }).then(function(token) {
+        
     axios
       .post("/api/sendEmail", {
-        messageBody: `Nome: ${values.name}, Email: ${values.email}, Telefone: ${values.phone}, Site: ${values.website}, local: ${values.local}, servico: ${values.servico}, detalhes: ${values.detalhes}`,
+        messageBody: `token: ${token},Nome: ${values.name}, Email: ${values.email}, Telefone: ${values.phone}, Site: ${values.website}, local: ${values.local}, servico: ${values.servico}, detalhes: ${values.detalhes}`,
       })
       .then(() => {
         formik.resetForm();
@@ -64,6 +71,8 @@ const Contato = () => {
         setLoading(false);
         setFailModal(true);
       });
+    });
+    });
   };
 
   const closeModal = () => {
@@ -92,7 +101,7 @@ const Contato = () => {
           <div className={Styles.feature}>
             <Image src={Icon} alt="Icon" className={Styles.icon} />
             <p>Se desejar faça seu pedido de orçamento pelo Whatsapp</p>
-            <p>(xx)xxxxx-xxxx</p>
+            <p>+55 22 98825-2862 / 22 26209246</p>
            </div> 
         </div>
         <div className={Styles.form}>
@@ -194,7 +203,8 @@ const Contato = () => {
           </p>
         </div>
       </div>
-    </>
+      <Script src='https://www.google.com/recaptcha/api.js?render=6Lf0A_sqAAAAAPA6RSKU7_p13QQ3Hq88rb-olUeh' />
+      </>
   );
 };
 

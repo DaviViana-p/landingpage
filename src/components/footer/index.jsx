@@ -12,8 +12,8 @@ const Footer = () => {
     <div className={Styles.container}>
       <div className={`${Styles.column} ${Styles.columnPrincipal}`}>
         <Image src={Logo} alt="Logo" />
-        <h1 className={Styles.title}>0800 800 800</h1>
-        <p>comercial@agencia.com.br</p>
+        <h1 className={Styles.title}>+55 22 98825-2862</h1>
+        <p>rodrigo@rvstopografia.com</p>
       </div>
       <div className={Styles.column}>
         <h1>MENU</h1>
@@ -28,7 +28,7 @@ const Footer = () => {
       <div className={`${Styles.column} ${Styles.alignRight}`}>
         <h1>SOCIAL</h1>
         <div className={Styles.icons}>
-          <Link href="/">
+          <Link href="https://www.instagram.com/rodrigo_viana_agrimensor/">
             <Image src={IconInstagram} alt="Icon" className={Styles.icon} />
           </Link>
           <Link href="/">
@@ -43,7 +43,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={Styles.allRightReserved}>
-        ©2022 AGENCIA - Todos os direitos reservados.
+        ©2022 RVS - Todos os direitos reservados.
       </div>
     </div>
   );
