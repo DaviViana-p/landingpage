@@ -17,7 +17,7 @@ const Header = () => {
         <Link href="/">Serviços</Link>
       </div>
       <div className={Styles.action}>
-        <Button title="Fale conosco" onClick={() => ScrollTo("contato")} />
+      <Button title="Fale conosco" onClick={() => ScrollTo("contato")} />
       </div>
     </div>
   );

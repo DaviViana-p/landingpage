@@ -13,7 +13,7 @@ const Welcome = () => {
         </p>
         <h1>RVS TOPOGRAFIA E CONSULTORIA</h1>
         <Button
-          title="Aumentar vendas"
+          title="Fale conosco"
           kind="secundary"
           onClick={() => ScrollTo("contato")}
         />
