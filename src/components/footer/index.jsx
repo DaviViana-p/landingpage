@@ -14,7 +14,9 @@ const Footer = () => {
         <Image src={Logo} alt="Logo" />
         <h1 className={Styles.title}>+55 22 98825-2862</h1>
         <p>rodrigo@rvstopografia.com</p>
+        <a href="https://accounts.zoho.com/signin">Email Login</a>
       </div>
+      
       <div className={`${Styles.column} ${Styles.alignRight}`}>
         <h1>SOCIAL</h1>
         <div className={Styles.icons}>
@@ -32,6 +34,7 @@ const Footer = () => {
           </Link>
         </div>
       </div>
+      
       <div className={Styles.allRightReserved}>
         ©2025 RVS - Todos os direitos reservados.
       </div>
