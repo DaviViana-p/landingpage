@@ -16,83 +16,22 @@ import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 
-const layerConfigs = [
-  // Áreas Protegidas
-  { key: 'afloramento_rochoso', label: 'Áreas Protegidas — Afloramento_Rochoso', layer: 'zoneamento_final:areas_protegidas___afloramento_rochoso' },
-  { key: 'apa_azeda', label: 'Áreas Protegidas — APA_Azeda', layer: 'zoneamento_final:areas_protegidas___apa_azeda' },
-  { key: 'apa_das_aguas_tucuns', label: 'Áreas Protegidas — APA_das_Aguas_Tucuns', layer: 'zoneamento_final:areas_protegidas___apa_das_aguas_tucuns' },
-  { key: 'apa_do_mangue_de_pedras', label: 'Áreas Protegidas — APA do Mangue de Pedras', layer: 'zoneamento_final:areas_protegidas___apa_do_mangue_de_pedras' },
-  { key: 'apa_mangue_de_pedras', label: 'Áreas Protegidas — APA_Mangue_de_Pedras', layer: 'zoneamento_final:areas_protegidas___apa_mangue_de_pedras' },
-  { key: 'apa_marinha', label: 'Áreas Protegidas — APA_Marinha', layer: 'zoneamento_final:areas_protegidas___apa_marinha' },
-  { key: 'apa_pau_brasil', label: 'Áreas Protegidas — APA_Pau_Brasil', layer: 'zoneamento_final:areas_protegidas___apa_pau_brasil' },
-  { key: 'apa_pesca_artesanal', label: 'Áreas Protegidas — APA_Pesca_Artesanal', layer: 'zoneamento_final:areas_protegidas___apa_pesca_artesanal' },
-  { key: 'app_topo_de_morro', label: 'Áreas Protegidas — APP_Topo_de_Morro', layer: 'zoneamento_final:areas_protegidas___app_topo_de_morro' },
-  { key: 'corais_bardot', label: 'Áreas Protegidas — Corais_Bardot', layer: 'zoneamento_final:areas_protegidas___corais_bardot' },
-  { key: 'corais_joao_fernandes', label: 'Áreas Protegidas — Corais_João_Fernandes', layer: 'zoneamento_final:areas_protegidas___corais_joao_fernandes' },
-  { key: 'corais_tartaruga', label: 'Áreas Protegidas — Corais_Tartaruga', layer: 'zoneamento_final:areas_protegidas___corais_tartaruga' },
-  { key: 'inepac', label: 'Áreas Protegidas — INEPAC', layer: 'zoneamento_final:areas_protegidas___inepac' },
-  { key: 'monumento_natural', label: 'Áreas Protegidas — Monumento_Natural', layer: 'zoneamento_final:areas_protegidas___monumento_natural' },
-  { key: 'parque_geriba', label: 'Áreas Protegidas — Parque_Geriba', layer: 'zoneamento_final:areas_protegidas___parque_geriba' },
-  { key: 'parque_lagoinha', label: 'Áreas Protegidas — Parque_Lagoinha', layer: 'zoneamento_final:areas_protegidas___parque_lagoinha' },
-  { key: 'parque_municipal_das_dunas', label: 'Áreas Protegidas — Parque_Municipal_das_Dunas', layer: 'zoneamento_final:areas_protegidas___parque_municipal_das_dunas' },
-  { key: 'pecs_atualizado_buzios', label: 'Áreas Protegidas — PECS_Atualizado_Buzios', layer: 'zoneamento_final:areas_protegidas___pecs_atualizado_buzios' },
-  { key: 'protecao_afloramento_rochoso_5m', label: 'Áreas Protegidas — Protecao_Afloramento_Rochoso_5m', layer: 'zoneamento_final:areas_protegidas___protecao_afloramento_rochoso_5m' },
+// Utilitário para gerar uma key única e amigável
+function makeLayerKey(name) {
+  return name.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
+}
 
-  // Outras camadas principais
-  { key: 'bairros2005', label: 'Bairros2005', layer: 'zoneamento_final:bairros2005' },
-  { key: 'lei_de_uso_do_solo_zoneamento_1', label: 'Lei_de_Uso_do_Solo_Zoneamento — Zoneamento_1', layer: 'zoneamento_final:lei_de_uso_do_solo_zoneamento___zoneamento_1' },
-  { key: 'limite_oficial_municipio', label: 'Limite_Oficial_do_Município — Limite_Oficial_Município', layer: 'zoneamento_final:limite_oficial_do_municipio___limite_oficial_municipio' },
-  { key: 'marcos_de_limite', label: 'Limite_Oficial_do_Município — Marcos_de_Limite', layer: 'zoneamento_final:limite_oficial_do_municipio___marcos_de_limite' },
-  { key: 'ruas', label: 'Ruas', layer: 'zoneamento_final:ruas' },
-  { key: 'buzios_rj', label: 'buzios_RJ', layer: 'zoneamento_final:ruas___inicio_e_fim' },
-
-  // Exemplos extras (GeoServer padrão, Natural Earth, etc)
-  { key: 'world_rectangle', label: 'World rectangle', layer: 'tiger:giant_polygon' },
-  { key: 'manhattan_poi', label: 'Manhattan (NY) points of interest', layer: 'tiger:poi' },
-  { key: 'manhattan_landmarks', label: 'Manhattan (NY) landmarks', layer: 'tiger:poly_landmarks' },
-  { key: 'manhattan_roads', label: 'Manhattan (NY) roads', layer: 'tiger:tiger_roads' },
-  { key: 'arc_sample', label: 'A sample ArcGrid file', layer: 'nurc:Arc_Sample' },
-  { key: 'img_sample', label: 'North America sample imagery', layer: 'nurc:Img_Sample' },
-  { key: 'pk50095', label: 'Pk50095', layer: 'nurc:Pk50095' },
-  { key: 'mosaic', label: 'mosaic', layer: 'nurc:mosaic' },
-  { key: 'usa_population', label: 'USA Population', layer: 'topp:states' },
-  { key: 'tasmania_cities', label: 'Tasmania cities', layer: 'topp:tasmania_cities' },
-  { key: 'tasmania_roads', label: 'Tasmania roads', layer: 'topp:tasmania_roads' },
-  { key: 'tasmania_state_boundaries', label: 'Tasmania state boundaries', layer: 'topp:tasmania_state_boundaries' },
-  { key: 'tasmania_water_bodies', label: 'Tasmania water bodies', layer: 'topp:tasmania_water_bodies' },
-  { key: 'spearfish_archsites', label: 'Spearfish archeological sites', layer: 'sf:archsites' },
-  { key: 'spearfish_bugsites', label: 'Spearfish bug locations', layer: 'sf:bugsites' },
-  { key: 'spearfish_restricted', label: 'Spearfish restricted areas', layer: 'sf:restricted' },
-  { key: 'spearfish_roads', label: 'Spearfish roads', layer: 'sf:roads' },
-  { key: 'spearfish_elevation', label: 'Spearfish elevation', layer: 'sf:sfdem' },
-  { key: 'spearfish_streams', label: 'Spearfish streams', layer: 'sf:streams' },
-  { key: 'sigweb_afloramento_rochoso', label: 'Afloramento_Rochoso', layer: 'sigweb:afloramento_rochoso' },
-  { key: 'sigweb_apa_azeda', label: 'APA_Azeda', layer: 'sigweb:apa_azeda' },
-  { key: 'sigweb_apa_das_aguas_tucuns', label: 'APA_das_Aguas_Tucuns', layer: 'sigweb:apa_das_aguas_tucuns' },
-  { key: 'sigweb_apa_mangue_de_pedras', label: 'AEIs_2016_Select', layer: 'sigweb:apa_mangue_de_pedras' },
-  { key: 'sigweb_apa_marinha', label: 'APA_Marinha', layer: 'sigweb:apa_marinha' },
-  { key: 'sigweb_apa_pau_brasil', label: 'APA_Pau_Brasil', layer: 'sigweb:apa_pau_brasil' },
-  { key: 'sigweb_apa_pesca_artesanal', label: 'APA_Pesca_Artesanal', layer: 'sigweb:apa_pesca_artesanal' },
-  { key: 'sigweb_app_topo_de_morro', label: 'APP_Topo_de_Morro', layer: 'sigweb:app_topo_de_morro' },
-  { key: 'sigweb_bairros2005', label: 'Bairros2005', layer: 'sigweb:bairros2005' },
-  { key: 'sigweb_coord_apa_marinha', label: 'Coord_APA_Marinha', layer: 'sigweb:coord_apa_marinha' },
-  { key: 'sigweb_corais_bardot', label: 'Corais_Bardot', layer: 'sigweb:corais_bardot' },
-  { key: 'sigweb_corais_joao_fernandes', label: 'Corais_João_Fernandes', layer: 'sigweb:corais_joao_fernandes' },
-  { key: 'sigweb_corais_tartaruga', label: 'Corais_Tartaruga', layer: 'sigweb:corais_tartaruga' },
-  { key: 'sigweb_curvas', label: 'Curvas', layer: 'sigweb:curvas' },
-  { key: 'sigweb_inepac', label: 'INEPAC', layer: 'sigweb:inepac' },
-  { key: 'sigweb_parque_geriba', label: 'Parque_Geriba', layer: 'sigweb:parque_geriba' },
-  { key: 'sigweb_parque_lagoinha', label: 'Parque_Lagoinha', layer: 'sigweb:parque_lagoinha' },
-  { key: 'sigweb_parque_municipal_das_dunas', label: 'Parque_Municipal_das_Dunas', layer: 'sigweb:parque_municipal_das_dunas' },
-  { key: 'sigweb_pecs_atualizado_buzios', label: 'PECS_Atualizado_Buzios', layer: 'sigweb:pecs_atualizado_buzios' },
-  { key: 'sigweb_pecs_zoneamento_portal_inea', label: 'PECS_Zoneamento_Portal_INEA', layer: 'sigweb:pecs_zoneamento_portal_inea' },
-  { key: 'sigweb_protecao_afloramento_rochoso_5m', label: 'Protecao_Afloramento_Rochoso_5m', layer: 'sigweb:protecao_afloramento_rochoso_5m' },
-  { key: 'ne_boundary_lines', label: 'Boundary Lines', layer: 'ne:boundary_lines' },
-  { key: 'ne_coastlines', label: 'Coastlines', layer: 'ne:coastlines' },
-  { key: 'ne_countries', label: 'Countries', layer: 'ne:countries' },
-  { key: 'ne_disputed_areas', label: 'Disputed Areas', layer: 'ne:disputed_areas' },
-  { key: 'ne_populated_places', label: 'Populated Places', layer: 'ne:populated_places' },
-];
+// Função para buscar nomes das camadas do GeoServer via GetCapabilities
+async function fetchGeoServerLayers() {
+  const url = 'https://145.223.75.113:8443/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities';
+  const response = await fetch(url);
+  const text = await response.text();
+  const parser = new window.DOMParser();
+  const xml = parser.parseFromString(text, 'text/xml');
+  // Pega todos os <Name> das camadas
+  const layers = Array.from(xml.querySelectorAll('Layer > Layer > Name')).map(el => el.textContent);
+  return layers;
+}
 
 function MapViewer() {
   const mapRef = useRef(null);
@@ -100,20 +39,47 @@ function MapViewer() {
   const measureLayerRef = useRef(null);
   const drawRef = useRef(null);
 
-  const [layersVisibility, setLayersVisibility] = useState(
-    Object.fromEntries(layerConfigs.map(l => [l.key, false]))
-  );
-  const [protectedOpen, setProtectedOpen] = useState(true);
+  const [layerConfigs, setLayerConfigs] = useState([]);
+  const [layersVisibility, setLayersVisibility] = useState({});
   const [search, setSearch] = useState('');
+  const [protectedOpen, setProtectedOpen] = useState(true);
   const [measuring, setMeasuring] = useState(false);
   const [measureResult, setMeasureResult] = useState(null);
   const [mousePosition, setMousePosition] = useState(null);
   const [menuMinimized, setMenuMinimized] = useState(false);
-  // Estado para controlar temporariamente o valor do input de cada camada
   const [layerPositions, setLayerPositions] = useState({});
 
+  // Busca as camadas do GeoServer ao carregar
   useEffect(() => {
+    fetchGeoServerLayers().then(layers => {
+      // Garante keys únicas mesmo para nomes repetidos
+      const keyCount = {};
+      const configs = layers.map(name => {
+        let baseKey = makeLayerKey(name);
+        let key = baseKey;
+        if (keyCount[baseKey] !== undefined) {
+          keyCount[baseKey] += 1;
+          key = `${baseKey}_${keyCount[baseKey]}`;
+        } else {
+          keyCount[baseKey] = 0;
+        }
+        return {
+          key,
+          label: name,
+          layer: name,
+        };
+      });
+      setLayerConfigs(configs);
+      setLayersVisibility(Object.fromEntries(configs.map(cfg => [cfg.key, false])));
+    });
+  }, []);
+
+  // Cria as layers do OpenLayers dinamicamente
+  useEffect(() => {
+    if (layerConfigs.length === 0) return;
+
     layerConfigs.forEach(cfg => {
+      // Exemplo: se quiser usar ImageWMS para algumas camadas específicas, personalize aqui
       if (cfg.key === 'bairros2005') {
         layerRefs.current[cfg.key] = new ImageLayer({
           visible: layersVisibility[cfg.key],
@@ -164,8 +130,9 @@ function MapViewer() {
     return () => {
       map.setTarget(undefined);
     };
-  }, []);
+  }, [layerConfigs]);
 
+  // Atualiza visibilidade das layers
   useEffect(() => {
     layerConfigs.forEach(cfg => {
       const layer = layerRefs.current[cfg.key];
@@ -173,8 +140,9 @@ function MapViewer() {
         layer.setVisible(layersVisibility[cfg.key]);
       }
     });
-  }, [layersVisibility]);
+  }, [layersVisibility, layerConfigs]);
 
+  // Medição (mantém igual ao seu)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -243,36 +211,7 @@ function MapViewer() {
     }
   }, [measuring]);
 
-  // Função para mover camada para cima
-  function moveLayerUp(layerKey) {
-    const map = mapRef.current;
-    const layer = layerRefs.current[layerKey];
-    if (!map || !layer) return;
-
-    const layers = [...map.getLayers().getArray()];
-    const idx = layers.indexOf(layer);
-    if (idx > 1) { // 0 geralmente é o OSM base
-      layers.splice(idx, 1);
-      layers.splice(idx - 1, 0, layer);
-      map.setLayers(layers); // Use setLayers para atualizar todas de uma vez
-    }
-  }
-
-  // Função para mover camada para baixo
-  function moveLayerDown(layerKey) {
-    const map = mapRef.current;
-    const layer = layerRefs.current[layerKey];
-    if (!map || !layer) return;
-
-    const layers = [...map.getLayers().getArray()];
-    const idx = layers.indexOf(layer);
-    if (idx !== -1 && idx < layers.length - 1) {
-      layers.splice(idx, 1);
-      layers.splice(idx + 1, 0, layer);
-      map.setLayers(layers); // Use setLayers para atualizar todas de uma vez
-    }
-  }
-
+  // Função para mover camada para posição específica
   function moveLayerToPosition(layerKey, position) {
     const map = mapRef.current;
     const layer = layerRefs.current[layerKey];
@@ -280,7 +219,6 @@ function MapViewer() {
 
     const layers = [...map.getLayers().getArray()];
     const idx = layers.indexOf(layer);
-    // O mapa base geralmente está na posição 0
     const min = 1;
     const max = layers.length - 1;
     let newPos = Math.max(min, Math.min(Number(position), max));
@@ -291,18 +229,8 @@ function MapViewer() {
     map.setLayers(layers);
   }
 
-  const handleProtectedToggle = () => {
-    const allSelected = protectedAreas.every(cfg => layersVisibility[cfg.key]);
-    setLayersVisibility(v => ({
-      ...v,
-      ...Object.fromEntries(protectedAreas.map(cfg => [cfg.key, !allSelected])),
-    }));
-  };
-
-  const filteredProtected = protectedAreas.filter(cfg =>
-    cfg.label.toLowerCase().includes(search.toLowerCase())
-  );
-  const filteredOthers = otherLayers.filter(cfg =>
+  // Filtro de busca
+  const filteredLayers = layerConfigs.filter(cfg =>
     cfg.label.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -358,7 +286,6 @@ function MapViewer() {
           <span style={{ marginRight: 6 }}>📏</span>
           {measuring ? 'Desligar Medida' : 'Medir'}
         </button>
-        {/* Adicione outros ícones de ferramentas aqui, se desejar */}
       </div>
 
       {/* Tooltip de medida */}
@@ -444,150 +371,61 @@ function MapViewer() {
         </div>
         {!menuMinimized && (
           <div style={{ padding: 12 }}>
-            <div
-              style={{
-                fontWeight: 'bold',
-                marginBottom: 4,
-                cursor: 'pointer',
-                userSelect: 'none',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-              onClick={() => setProtectedOpen(open => !open)}
-            >
-              <span style={{ marginRight: 6 }}>{protectedOpen ? '▼' : '▶'}</span>
-              <input
-                type="checkbox"
-                checked={protectedAreas.every(cfg => layersVisibility[cfg.key])}
-                onChange={e => { e.stopPropagation(); handleProtectedToggle(); }}
-                onClick={e => e.stopPropagation()}
-                style={{ marginRight: 6 }}
-                ref={el => {
-                  if (el) {
-                    el.indeterminate =
-                      protectedAreas.some(cfg => layersVisibility[cfg.key]) &&
-                      !protectedAreas.every(cfg => layersVisibility[cfg.key]);
-                  }
-                }}
-              />
-              Áreas Protegidas
-            </div>
-            {protectedOpen && (
-              <div style={{ marginLeft: 12, marginBottom: 8 }}>
-                {filteredProtected.length === 0 && (
-                  <div style={{ color: '#888' }}>Nenhuma camada encontrada</div>
-                )}
-                {filteredProtected.map(cfg => {
-                  const visible = layersVisibility[cfg.key];
-                  const position =
-                    mapRef.current && visible
-                      ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
-                      : '';
-                  return (
-                    <div
-                      key={cfg.key}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        marginBottom: 4,
-                        padding: '2px 0',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={visible}
-                        onChange={e =>
-                          setLayersVisibility(v => ({
-                            ...v,
-                            [cfg.key]: e.target.checked,
-                          }))
-                        }
-                        style={{ marginRight: 6 }}
-                      />
-                      <span style={{ flex: 1 }}>{cfg.label}</span>
-                      {visible && (
-                        <input
-                          type="number"
-                          min={1}
-                          max={layerConfigs.length}
-                          value={
-                            layerPositions[cfg.key] !== undefined
-                              ? layerPositions[cfg.key]
-                              : position
-                          }
-                          style={{ width: 40, marginLeft: 8 }}
-                          onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
-                          onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              handlePositionInputBlur(cfg.key, e.target.value);
-                              e.target.blur();
-                            }
-                          }}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+            {filteredLayers.length === 0 && (
+              <div style={{ color: '#888' }}>Nenhuma camada encontrada</div>
             )}
-            {filteredOthers.length > 0 &&
-              filteredOthers.map(cfg => {
-                const visible = layersVisibility[cfg.key];
-                const position =
-                  mapRef.current && visible
-                    ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
-                    : '';
-                return (
-                  <div
-                    key={cfg.key}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: 4,
-                      padding: '2px 0',
-                    }}
-                  >
+            {filteredLayers.map(cfg => {
+              const visible = layersVisibility[cfg.key];
+              const position =
+                mapRef.current && visible
+                  ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
+                  : '';
+              return (
+                <div
+                  key={cfg.key}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: 4,
+                    padding: '2px 0',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={visible}
+                    onChange={e =>
+                      setLayersVisibility(v => ({
+                        ...v,
+                        [cfg.key]: e.target.checked,
+                      }))
+                    }
+                    style={{ marginRight: 6 }}
+                  />
+                  <span style={{ flex: 1 }}>{cfg.label}</span>
+                  {visible && (
                     <input
-                      type="checkbox"
-                      checked={visible}
-                      onChange={e =>
-                        setLayersVisibility(v => ({
-                          ...v,
-                          [cfg.key]: e.target.checked,
-                        }))
+                      type="number"
+                      min={1}
+                      max={layerConfigs.length}
+                      value={
+                        layerPositions[cfg.key] !== undefined
+                          ? layerPositions[cfg.key]
+                          : position
                       }
-                      style={{ marginRight: 6 }}
-                    />
-                    <span style={{ flex: 1 }}>{cfg.label}</span>
-                    {visible && (
-                      <input
-                        type="number"
-                        min={1}
-                        max={layerConfigs.length}
-                        value={
-                          layerPositions[cfg.key] !== undefined
-                            ? layerPositions[cfg.key]
-                            : position
+                      style={{ width: 40, marginLeft: 8 }}
+                      onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
+                      onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          handlePositionInputBlur(cfg.key, e.target.value);
+                          e.target.blur();
                         }
-                        style={{ width: 40, marginLeft: 8 }}
-                        onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
-                        onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') {
-                            handlePositionInputBlur(cfg.key, e.target.value);
-                            e.target.blur();
-                          }
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            {filteredOthers.length === 0 &&
-              filteredProtected.length === 0 && (
-                <div style={{ color: '#888' }}>Nenhuma camada encontrada</div>
-              )}
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
