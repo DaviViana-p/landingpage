@@ -15,22 +15,61 @@ import { getLength } from 'ol/sphere';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import { transformExtent } from 'ol/proj';
+import proj4 from 'proj4';
+import { register } from 'ol/proj/proj4';
+
+// Defina o código EPSG:31984 (SIRGAS 2000 / UTM zone 24S)
+proj4.defs('EPSG:31984', '+proj=utm +zone=24 +south +datum=SIRGAS2000 +units=m +no_defs');
+register(proj4);
 
 // Utilitário para gerar uma key única e amigável
 function makeLayerKey(name) {
   return name.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
 }
 
-// Função para buscar nomes das camadas do GeoServer via GetCapabilities
+// Função para buscar nomes das camadas do GeoServer via GetCapabilities (agora retorna bbox)
 async function fetchGeoServerLayers() {
   const url = 'https://145.223.75.113:8443/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities';
   const response = await fetch(url);
   const text = await response.text();
   const parser = new window.DOMParser();
   const xml = parser.parseFromString(text, 'text/xml');
-  // Pega todos os <Name> das camadas
-  const layers = Array.from(xml.querySelectorAll('Layer > Layer > Name')).map(el => el.textContent);
+
+  const allLayers = Array.from(xml.querySelectorAll('Layer > Layer'));
+  const layers = allLayers
+    .map(layer => {
+      const nameEl = layer.querySelector('Name');
+      if (!nameEl) return null;
+      const name = nameEl.textContent;
+      // Procura o BoundingBox EPSG:31984 ou EPSG:4326
+      let bboxEl = layer.querySelector('BoundingBox[SRS="EPSG:31984"], BoundingBox[CRS="EPSG:31984"]')
+        || layer.querySelector('BoundingBox[SRS="EPSG:4326"], BoundingBox[CRS="EPSG:4326"]');
+      let bbox = null;
+      if (bboxEl) {
+        bbox = [
+          parseFloat(bboxEl.getAttribute('minx')),
+          parseFloat(bboxEl.getAttribute('miny')),
+          parseFloat(bboxEl.getAttribute('maxx')),
+          parseFloat(bboxEl.getAttribute('maxy')),
+        ];
+      }
+      return { name, bbox };
+    })
+    .filter(Boolean);
   return layers;
+}
+
+// Agrupa as camadas por categoria (prefixo antes do :)
+function groupLayersByCategory(layers) {
+  const groups = {};
+  layers.forEach(cfg => {
+    const [category, rest] = cfg.label.split(':');
+    const cat = rest ? category : 'Outros';
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(cfg);
+  });
+  return groups;
 }
 
 function MapViewer() {
@@ -48,13 +87,14 @@ function MapViewer() {
   const [mousePosition, setMousePosition] = useState(null);
   const [menuMinimized, setMenuMinimized] = useState(false);
   const [layerPositions, setLayerPositions] = useState({});
+  const [categoryOpen, setCategoryOpen] = useState({});
 
   // Busca as camadas do GeoServer ao carregar
   useEffect(() => {
     fetchGeoServerLayers().then(layers => {
       // Garante keys únicas mesmo para nomes repetidos
       const keyCount = {};
-      const configs = layers.map(name => {
+      const configs = layers.map(({ name, bbox }) => {
         let baseKey = makeLayerKey(name);
         let key = baseKey;
         if (keyCount[baseKey] !== undefined) {
@@ -67,10 +107,19 @@ function MapViewer() {
           key,
           label: name,
           layer: name,
+          bbox, // salva o bbox
         };
       });
       setLayerConfigs(configs);
       setLayersVisibility(Object.fromEntries(configs.map(cfg => [cfg.key, false])));
+
+      // Agrupa por categoria e inicializa todas recolhidas
+      const grouped = groupLayersByCategory(configs);
+      const initialCategoryOpen = {};
+      Object.keys(grouped).forEach(cat => {
+        initialCategoryOpen[cat] = false;
+      });
+      setCategoryOpen(initialCategoryOpen);
     });
   }, []);
 
@@ -89,7 +138,8 @@ function MapViewer() {
               'LAYERS': cfg.layer,
               'FORMAT': 'image/png',
               'TRANSPARENT': true,
-              'SRS': 'EPSG:4326',
+              'SRS': 'EPSG:31984', 
+              'VERSION': '1.1.1',  
             },
             serverType: 'geoserver',
             crossOrigin: 'anonymous',
@@ -99,12 +149,14 @@ function MapViewer() {
         layerRefs.current[cfg.key] = new TileLayer({
           visible: layersVisibility[cfg.key],
           source: new TileWMS({
-            url: 'https://145.223.75.113:8443/geoserver/zoneamento_final/wms',
+            // Use o workspace correto extraído do nome da camada
+            url: `https://145.223.75.113:8443/geoserver/${cfg.layer.split(':')[0]}/wms`,
             params: {
               'LAYERS': cfg.layer,
               'FORMAT': 'image/png',
               'TRANSPARENT': true,
-              'SRS': 'EPSG:4326',
+              'SRS': 'EPSG:31984', 
+              'VERSION': '1.1.1',  
             },
             serverType: 'geoserver',
             crossOrigin: 'anonymous',
@@ -233,6 +285,17 @@ function MapViewer() {
   const filteredLayers = layerConfigs.filter(cfg =>
     cfg.label.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Agrupa as camadas filtradas por categoria
+  const groupedLayers = groupLayersByCategory(filteredLayers);
+
+  // Função para alternar o estado de aberto/fechado de uma categoria
+  function toggleCategory(cat) {
+    setCategoryOpen(open => ({
+      ...open,
+      [cat]: !open[cat],
+    }));
+  }
 
   function handlePositionInputChange(layerKey, value) {
     setLayerPositions(pos => ({
@@ -371,61 +434,119 @@ function MapViewer() {
         </div>
         {!menuMinimized && (
           <div style={{ padding: 12 }}>
+            {Object.entries(groupedLayers).map(([cat, layers]) => (
+              <div key={cat} style={{ marginBottom: 16 }}>
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    color: '#2563eb',
+                    marginBottom: 6,
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <button
+                    onClick={() => toggleCategory(cat)}
+                    style={{
+                      marginRight: 8,
+                      border: 'none',
+                      background: 'transparent',
+                      fontSize: 16,
+                      cursor: 'pointer',
+                      color: '#2563eb',
+                    }}
+                    title={categoryOpen[cat] ? 'Minimizar' : 'Expandir'}
+                  >
+                    {categoryOpen[cat] ? '−' : '+'}
+                  </button>
+                  {cat}
+                </div>
+                {categoryOpen[cat] !== false && layers.map(cfg => {
+                  const visible = layersVisibility[cfg.key];
+                  const position =
+                    mapRef.current && visible
+                      ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
+                      : '';
+                  return (
+                    <div
+                      key={cfg.key}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: 4,
+                        padding: '2px 0',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={visible}
+                        onChange={e => {
+                          setLayersVisibility(v => ({
+                            ...v,
+                            [cfg.key]: e.target.checked,
+                          }));
+                          // Se ativou a camada e tem bbox, centraliza e dá zoom
+                          if (e.target.checked && cfg.bbox && mapRef.current) {
+                            let bbox = cfg.bbox;
+                            const isUTM = Math.abs(bbox[0]) > 180 || Math.abs(bbox[2]) > 180;
+                            if (isUTM) {
+                              bbox = transformExtent(bbox, 'EPSG:31984', 'EPSG:4326');
+                            }
+                            mapRef.current.getView().fit(bbox, { duration: 700, padding: [40, 40, 40, 40] });
+                          }
+                        }}
+                        style={{ marginRight: 6 }}
+                      />
+                      <span
+                        style={{
+                          flex: 1,
+                          cursor: cfg.bbox ? 'pointer' : 'default',
+                          textDecoration: cfg.bbox ? 'underline' : 'none'
+                        }}
+                        onClick={() => {
+                          if (cfg.bbox && mapRef.current) {
+                            let bbox = cfg.bbox;
+                            // Se o bbox for UTM (EPSG:31984), transforma para EPSG:4326
+                            const isUTM = Math.abs(bbox[0]) > 180 || Math.abs(bbox[2]) > 180;
+                            if (isUTM) {
+                              bbox = transformExtent(bbox, 'EPSG:31984', 'EPSG:4326');
+                            }
+                            mapRef.current.getView().fit(bbox, { duration: 700, padding: [40, 40, 40, 40] });
+                          }
+                        }}
+                      >
+                        {cfg.label}
+                      </span>
+                      {visible && (
+                        <input
+                          type="number"
+                          min={1}
+                          max={layerConfigs.length}
+                          value={
+                            layerPositions[cfg.key] !== undefined
+                              ? layerPositions[cfg.key]
+                              : position
+                          }
+                          style={{ width: 40, marginLeft: 8 }}
+                          onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
+                          onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                              handlePositionInputBlur(cfg.key, e.target.value);
+                              e.target.blur();
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
             {filteredLayers.length === 0 && (
               <div style={{ color: '#888' }}>Nenhuma camada encontrada</div>
             )}
-            {filteredLayers.map(cfg => {
-              const visible = layersVisibility[cfg.key];
-              const position =
-                mapRef.current && visible
-                  ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
-                  : '';
-              return (
-                <div
-                  key={cfg.key}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: 4,
-                    padding: '2px 0',
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={visible}
-                    onChange={e =>
-                      setLayersVisibility(v => ({
-                        ...v,
-                        [cfg.key]: e.target.checked,
-                      }))
-                    }
-                    style={{ marginRight: 6 }}
-                  />
-                  <span style={{ flex: 1 }}>{cfg.label}</span>
-                  {visible && (
-                    <input
-                      type="number"
-                      min={1}
-                      max={layerConfigs.length}
-                      value={
-                        layerPositions[cfg.key] !== undefined
-                          ? layerPositions[cfg.key]
-                          : position
-                      }
-                      style={{ width: 40, marginLeft: 8 }}
-                      onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
-                      onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          handlePositionInputBlur(cfg.key, e.target.value);
-                          e.target.blur();
-                        }
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })}
           </div>
         )}
       </div>
