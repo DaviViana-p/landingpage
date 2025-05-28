@@ -112,3 +112,14 @@
   text-align: center;
   margin-bottom: 4rem;
 }
+
+.icon {
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+
+  @include Phone {
+    width: 208px;
+    height: 208px;
+  }
+}
