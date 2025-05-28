@@ -73,7 +73,7 @@ function MapViewer() {
         layerRefs.current[cfg.key] = new ImageLayer({
           visible: layersVisibility[cfg.key],
           source: new ImageWMS({
-            url: 'https://145.223.75.113:8443/geoserver/zoneamento_final/wmsest',
+            url: 'https://145.223.75.113:8443/geoserver/zoneamento_final/wms',
             params: {
               'LAYERS': cfg.layer,
               'FORMAT': 'image/png',
