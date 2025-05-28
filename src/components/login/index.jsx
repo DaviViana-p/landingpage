@@ -8,11 +8,13 @@ import Input from "../input";
 import { Loading } from "../loading";
 import { SuccessModal } from "../successModal";
 import { FailModal } from "../failModal";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [failModal, setFailModal] = useState(false);
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -35,9 +37,13 @@ const Login = () => {
         username: values.username,
         password: values.password,
       })
-      .then(() => {
+      .then((res) => {
         setIsLoading(false);
-        setSuccessModal(true);
+        // Armazena o token JWT no localStorage
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+        }
+        router.push("/webgis");
       })
       .catch(() => {
         setIsLoading(false);
