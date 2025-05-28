@@ -476,6 +476,7 @@ function MapViewer() {
                         alignItems: 'center',
                         marginBottom: 4,
                         padding: '2px 0',
+                        gap: 8,
                       }}
                     >
                       <input
@@ -502,12 +503,15 @@ function MapViewer() {
                         style={{
                           flex: 1,
                           cursor: cfg.bbox ? 'pointer' : 'default',
-                          textDecoration: cfg.bbox ? 'underline' : 'none'
+                          textDecoration: cfg.bbox ? 'underline' : 'none',
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-all',
+                          marginRight: 0,
+                          fontSize: 14,
                         }}
                         onClick={() => {
                           if (cfg.bbox && mapRef.current) {
                             let bbox = cfg.bbox;
-                            // Se o bbox for UTM (EPSG:31984), transforma para EPSG:4326
                             const isUTM = Math.abs(bbox[0]) > 180 || Math.abs(bbox[2]) > 180;
                             if (isUTM) {
                               bbox = transformExtent(bbox, 'EPSG:31984', 'EPSG:4326');
@@ -528,7 +532,7 @@ function MapViewer() {
                               ? layerPositions[cfg.key]
                               : position
                           }
-                          style={{ width: 40, marginLeft: 8 }}
+                          style={{ width: 40, minWidth: 40 }}
                           onChange={e => handlePositionInputChange(cfg.key, e.target.value)}
                           onBlur={e => handlePositionInputBlur(cfg.key, e.target.value)}
                           onKeyDown={e => {
