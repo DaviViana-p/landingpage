@@ -30,7 +30,7 @@ function makeLayerKey(name) {
 
 // Função para buscar nomes das camadas do GeoServer via GetCapabilities (agora retorna bbox)
 async function fetchGeoServerLayers() {
-  const url = 'https://145.223.75.113:8443/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities';
+  const url = 'https://geoserver.rvstopografia.com/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities';
   const response = await fetch(url);
   const text = await response.text();
   const parser = new window.DOMParser();
@@ -42,19 +42,26 @@ async function fetchGeoServerLayers() {
       const nameEl = layer.querySelector('Name');
       if (!nameEl) return null;
       const name = nameEl.textContent;
-      // Procura o BoundingBox EPSG:31984 ou EPSG:4326
-      let bboxEl = layer.querySelector('BoundingBox[SRS="EPSG:31984"], BoundingBox[CRS="EPSG:31984"]')
-        || layer.querySelector('BoundingBox[SRS="EPSG:4326"], BoundingBox[CRS="EPSG:4326"]');
+      // Try both CRS and SRS for WMS 1.3.0 and 1.1.1 compatibility
+      let bboxEl = layer.querySelector('BoundingBox[CRS="EPSG:31984"], BoundingBox[SRS="EPSG:31984"]')
+        || layer.querySelector('BoundingBox[CRS="EPSG:4326"], BoundingBox[SRS="EPSG:4326"]');
       let bbox = null;
       if (bboxEl) {
-        bbox = [
-          parseFloat(bboxEl.getAttribute('minx')),
-          parseFloat(bboxEl.getAttribute('miny')),
-          parseFloat(bboxEl.getAttribute('maxx')),
-          parseFloat(bboxEl.getAttribute('maxy')),
-        ];
+        const minx = parseFloat(bboxEl.getAttribute('minx'));
+        const miny = parseFloat(bboxEl.getAttribute('miny'));
+        const maxx = parseFloat(bboxEl.getAttribute('maxx'));
+        const maxy = parseFloat(bboxEl.getAttribute('maxy'));
+        if (
+          !isNaN(minx) && !isNaN(miny) &&
+          !isNaN(maxx) && !isNaN(maxy)
+        ) {
+          bbox = [minx, miny, maxx, maxy];
+        }
       }
-      return { name, bbox };
+      // Optional: get Title for a more user-friendly label
+      const titleEl = layer.querySelector('Title');
+      const label = titleEl ? titleEl.textContent : name;
+      return { name, bbox, label };
     })
     .filter(Boolean);
   return layers;
@@ -133,7 +140,7 @@ function MapViewer() {
         layerRefs.current[cfg.key] = new ImageLayer({
           visible: layersVisibility[cfg.key],
           source: new ImageWMS({
-            url: 'https://145.223.75.113:8443/geoserver/zoneamento_final/wms',
+            url: 'hhttps://geoserver.rvstopografia.com/geoserver/zoneamento_final/wms',
             params: {
               'LAYERS': cfg.layer,
               'FORMAT': 'image/png',
@@ -150,7 +157,7 @@ function MapViewer() {
           visible: layersVisibility[cfg.key],
           source: new TileWMS({
             // Use o workspace correto extraído do nome da camada
-            url: `https://145.223.75.113:8443/geoserver/${cfg.layer.split(':')[0]}/wms`,
+            url: `https://geoserver.rvstopografia.com/geoserver/${cfg.layer.split(':')[0]}/wms`,
             params: {
               'LAYERS': cfg.layer,
               'FORMAT': 'image/png',
