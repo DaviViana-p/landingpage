@@ -475,6 +475,9 @@ function MapViewer() {
                     mapRef.current && visible
                       ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
                       : '';
+                  // Monta o link KML
+                  const workspace = cfg.layer.split(':')[0];
+                  const kmlUrl = `https://geoserver.rvstopografia.com/geoserver/${workspace}/wms/kml?layers=${encodeURIComponent(cfg.layer)}`;
                   return (
                     <div
                       key={cfg.key}
@@ -494,7 +497,6 @@ function MapViewer() {
                             ...v,
                             [cfg.key]: e.target.checked,
                           }));
-                          // Se ativou a camada e tem bbox, centraliza e dá zoom
                           if (e.target.checked && cfg.bbox && mapRef.current) {
                             let bbox = cfg.bbox;
                             const isUTM = Math.abs(bbox[0]) > 180 || Math.abs(bbox[2]) > 180;
@@ -529,6 +531,22 @@ function MapViewer() {
                       >
                         {cfg.label}
                       </span>
+                      {/* Botão de download KML */}
+                      <a
+                        href={kmlUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: 13,
+                          color: '#2563eb',
+                          textDecoration: 'underline',
+                          marginRight: 4,
+                          whiteSpace: 'nowrap',
+                        }}
+                        title="Baixar KML"
+                      >
+                        KML
+                      </a>
                       {visible && (
                         <input
                           type="number"
