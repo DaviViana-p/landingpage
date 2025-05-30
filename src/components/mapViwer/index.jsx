@@ -475,7 +475,7 @@ function MapViewer() {
                     mapRef.current && visible
                       ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
                       : '';
-                  // Monta o link KML
+e                  // Monta o link KML
                   const workspace = cfg.layer.split(':')[0];
                   const kmlUrl = `https://geoserver.rvstopografia.com/geoserver/${workspace}/wms/kml?layers=${encodeURIComponent(cfg.layer)}`;
                   return (
@@ -546,6 +546,22 @@ function MapViewer() {
                         title="Baixar KML"
                       >
                         KML
+                      </a>
+                      {/* Botão de download Shapefile */}
+                      <a
+                        href={`https://geoserver.rvstopografia.com/geoserver/${workspace}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(cfg.layer)}&outputFormat=SHAPE-ZIP`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: 13,
+                          color: '#2563eb',
+                          textDecoration: 'underline',
+                          marginRight: 4,
+                          whiteSpace: 'nowrap',
+                        }}
+                        title="Baixar Shapefile"
+                      >
+                        SHP
                       </a>
                       {visible && (
                         <input
