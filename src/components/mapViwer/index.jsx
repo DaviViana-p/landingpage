@@ -544,7 +544,10 @@ function MapViewer() {
                             const format = value.replace('WMS:', '');
                             url = `https://geoserver.rvstopografia.com/geoserver/${workspace}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${encodeURIComponent(cfg.layer)}&bbox=${cfg.bbox ? cfg.bbox.join(',') : ''}&width=768&height=716&srs=EPSG:31984&styles=&format=${format}`;
                           } else if (isWFS) {
-                            const format = value.replace('WFS:', '');
+                            let format = value.replace('WFS:', '');
+                            // Corrige para SHAPE-ZIP e KML puro
+                            if (format === 'SHAPE-ZIP') format = 'SHAPE-ZIP';
+                            if (format === 'application/vnd.google-earth.kml+xml') format = 'application/vnd.google-earth.kml+xml';
                             url = `https://geoserver.rvstopografia.com/geoserver/${workspace}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(cfg.layer)}&outputFormat=${format}`;
                           }
                           if (url) window.open(url, '_blank');
