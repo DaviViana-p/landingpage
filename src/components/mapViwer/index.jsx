@@ -475,9 +475,8 @@ function MapViewer() {
                     mapRef.current && visible
                       ? mapRef.current.getLayers().getArray().indexOf(layerRefs.current[cfg.key])
                       : '';
-e                  // Monta o link KML
+                  // Monta o link KML
                   const workspace = cfg.layer.split(':')[0];
-                  const kmlUrl = `https://geoserver.rvstopografia.com/geoserver/${workspace}/wms/kml?layers=${encodeURIComponent(cfg.layer)}`;
                   return (
                     <div
                       key={cfg.key}
@@ -531,38 +530,45 @@ e                  // Monta o link KML
                       >
                         {cfg.label}
                       </span>
-                      {/* Botão de download KML */}
-                      <a
-                        href={kmlUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          fontSize: 13,
-                          color: '#2563eb',
-                          textDecoration: 'underline',
-                          marginRight: 4,
-                          whiteSpace: 'nowrap',
+                      {/* Select para download KML/SHP */}
+                      <select
+                        defaultValue=""
+                        style={{ fontSize: 13, marginRight: 4 }}
+                        onChange={e => {
+                          const value = e.target.value;
+                          if (!value) return;
+                          const isWMS = value.startsWith('WMS:');
+                          const isWFS = value.startsWith('WFS:');
+                          let url = '';
+                          if (isWMS) {
+                            const format = value.replace('WMS:', '');
+                            url = `https://geoserver.rvstopografia.com/geoserver/${workspace}/wms?service=WMS&version=1.1.0&request=GetMap&layers=${encodeURIComponent(cfg.layer)}&bbox=${cfg.bbox ? cfg.bbox.join(',') : ''}&width=768&height=716&srs=EPSG:31984&styles=&format=${format}`;
+                          } else if (isWFS) {
+                            const format = value.replace('WFS:', '');
+                            url = `https://geoserver.rvstopografia.com/geoserver/${workspace}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(cfg.layer)}&outputFormat=${format}`;
+                          }
+                          if (url) window.open(url, '_blank');
+                          e.target.selectedIndex = 0;
                         }}
-                        title="Baixar KML"
                       >
-                        KML
-                      </a>
-                      {/* Botão de download Shapefile */}
-                      <a
-                        href={`https://geoserver.rvstopografia.com/geoserver/${workspace}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(cfg.layer)}&outputFormat=SHAPE-ZIP`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          fontSize: 13,
-                          color: '#2563eb',
-                          textDecoration: 'underline',
-                          marginRight: 4,
-                          whiteSpace: 'nowrap',
-                        }}
-                        title="Baixar Shapefile"
-                      >
-                        SHP
-                      </a>
+                        <option value="">Baixar...</option>
+                        <optgroup label="WMS">
+                          <option value="WMS:image/png">PNG</option>
+                          <option value="WMS:image/jpeg">JPEG</option>
+                          <option value="WMS:image/svg+xml">SVG</option>
+                          <option value="WMS:application/vnd.google-earth.kml+xml">KML</option>
+                          <option value="WMS:application/pdf">PDF</option>
+                          <option value="WMS:image/geotiff">GeoTIFF</option>
+                        </optgroup>
+                        <optgroup label="WFS">
+                          <option value="WFS:application/vnd.google-earth.kml+xml">KML</option>
+                          <option value="WFS:application/json">GeoJSON</option>
+                          <option value="WFS:SHAPE-ZIP">Shapefile</option>
+                          <option value="WFS:csv">CSV</option>
+                          <option value="WFS:text/xml; subtype=gml/2.1.2">GML2</option>
+                          <option value="WFS:gml3">GML3.1</option>
+                        </optgroup>
+                      </select>
                       {visible && (
                         <input
                           type="number"
